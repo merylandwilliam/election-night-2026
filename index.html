@@ -685,14 +685,14 @@ async function initLive(){
   }catch(e){liveErr=true;liveBar();}
 }
 if(SHARED){
-  $("wbody").innerHTML=`<p>Results appear here live as the host enters them, right after networks and Decision Desk call each race. Your screen updates on its own, so just keep it open.</p><p>The app explains what each result means for Democrats' chances at the House and whether the night is turning into a blowout.</p><p>Watch the line under the headline: <b>● LIVE</b> means you're up to date.</p>`;
+  $("wbody").innerHTML=`<p>Meryl is using this to follow along with the news tonight. If you want to follow along with her, or use it to keep track of the night yourself, go for it.</p><p><b>Heads up:</b> nothing here comes from Decision Desk or anywhere online. Every result is Meryl tapping it in by hand while she watches, so it's only as up to date as she is, and she might get bored before the last race is called.</p><p>It isn't meant to track every race. It's for watching how big (hopefully) our blue wave is going to be.</p>`;
   $("wtabs").innerHTML=`<b>Blowout:</b> the 11-item checklist. <b>House:</b> 60 key districts, filled in as races are called. <b>What it means:</b> plain-English read of the night.`;
   $("priv").textContent="Forecasts as of 3:22 p.m. ET, Nov 2, 2026. Results are entered by the host and sent to your screen through a Google Firebase database. Viewers don't sign in, and the app has no ads or tracking.";
 }
 if(LIVE_OK&&!qs.has("host")){
   $("wmode").hidden=false;$("wmode").textContent=SHARED?"Track it myself":"Follow the host live";
   $("wok").textContent=SHARED?"Follow live":"Got it";
-  $("wbody").insertAdjacentHTML("beforeend",SHARED?`<p><b>Rather tap results in yourself?</b> Choose <b>Track it myself</b>. Your picks stay on your phone. You can switch back any time from the link under the headline.</p>`:`<p>You're tracking on your own. To see the host's results instead, choose <b>Follow the host live</b>, or use the link under the headline.</p>`);
+  $("wbody").insertAdjacentHTML("beforeend",SHARED?`<p><b>Want to tap in results yourself?</b> Choose <b>Track it myself</b>. Your picks stay on your phone, and you can switch back any time from the link under the headline.</p>`:`<p>Right now you're tracking on your own, so you'll only see what you tap in. To see Meryl's results instead, choose <b>Follow the host live</b>, or use the link under the headline.</p>`);
 }
 if(!storeOk&&!SHARED)$("warn").style.display="block";
 function applyTheme(){const d=document.documentElement.dataset.theme==="dark";$("themeb").textContent=d?"☀":"☾";$("themeb").setAttribute("aria-label",d?"Switch to light mode":"Switch to dark mode");document.querySelector('meta[name=theme-color]').content=d?"#030B1F":"#0A1F44";}
