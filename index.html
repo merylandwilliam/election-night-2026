@@ -623,7 +623,7 @@ document.addEventListener("visibilitychange",async()=>{if(document.visibilitySta
 function liveBar(){
   const el=$("live"),mb=$("modeb");
   mb.hidden=!LIVE_OK||canEdit&&SHARED;
-  mb.textContent=SHARED?"Track results myself instead":"Follow the host live instead";
+  mb.textContent=SHARED?"Track results myself instead":"Follow Meryl live instead";
   if(!SHARED){el.hidden=!LIVE_OK;el.className="live";el.textContent="Tracking on your own · Only you see your taps";return;}
   el.hidden=false;const last=S.u?fmtT(S.u):"";let cls="",txt;
   if(liveErr){cls="bad";txt=`Can't reach live results. ${last?"Showing the last update from "+last+".":"Check your connection and reload."}`;}
@@ -635,16 +635,16 @@ function liveBar(){
 }
 function noteBar(){
   const n=S.note,el=$("note");
-  if(!SHARED||!n||!n.x){el.hidden=true;}else{el.hidden=false;el.innerHTML=`<span class="nl">From the host · ${fmtS(n.t)}</span>${esc(n.x)}`;}
+  if(!SHARED||!n||!n.x){el.hidden=true;}else{el.hidden=false;el.innerHTML=`<span class="nl">From Meryl · ${fmtS(n.t)}</span>${esc(n.x)}`;}
   const b=$("noteb");b.hidden=!(SHARED&&canEdit);b.textContent=n&&n.x?"Edit or clear the note":"Post a note to everyone";
 }
 function setMode(m){
   if(m==="solo"){
-    if(!confirm("Track results yourself? Your taps will stay on your phone, and you won't see the host's updates until you switch back."))return;
+    if(!confirm("Track results yourself? Your taps will stay on your phone, and you won't see Meryl's updates until you switch back."))return;
     const mine=lsGet(KEY),live=lsGet(CACHE);
     const mineEmpty=!mine||(!Object.keys(mine.h||{}).length&&!Object.keys(mine.b||{}).length);
     const liveHas=live&&(Object.keys(objOf(live.h)).length||Object.keys(objOf(live.b)).length);
-    if(liveHas&&(mineEmpty||confirm("Start from the host's results so far? Choose Cancel to keep your own earlier picks.")))
+    if(liveHas&&(mineEmpty||confirm("Start from Meryl's results so far? Choose Cancel to keep your own earlier picks.")))
       lsSet(KEY,{b:objOf(live.b),h:objOf(live.h)});
   }
   P.mode=m;P.welcomed=true;savePrefs();
@@ -659,7 +659,7 @@ function announce(o,n){
   SEATS.forEach(s=>{const a=o.h[s.d],b=n.h[s.d];if(b&&(!a||a.r!==b.r))msgs.push(`${s.d}: ${b.r==="D"?"D win":"R win"}${tag(s,b.r)?" ("+tag(s,b.r)+")":""}`);});
   ITEMS.forEach(i=>{const a=o.b[i.id],b=n.b[i.id];if(b&&(!a||a.v!==b.v))msgs.push(`${i.l}: ${b.v==="y"?"Yes":"No"}`);});
   ["w","l"].forEach(k=>{const d=Object.keys(n.x[k]).length-Object.keys((o.x&&o.x[k])||{}).length;if(d>0)msgs.push(k==="w"?"Dem upset win outside the watchlist":"Dem loss outside the watchlist");});
-  const nn=n.note&&n.note.x,on=o.note&&o.note.x;if(nn&&(nn!==on))msgs.push("New note from the host");
+  const nn=n.note&&n.note.x,on=o.note&&o.note.x;if(nn&&(nn!==on))msgs.push("New note from Meryl");
   if(msgs.length===1)showToast(msgs[0],null);else if(msgs.length>1)showToast(`${msgs.length} new results`,null);
 }
 async function initLive(){
@@ -687,12 +687,12 @@ async function initLive(){
 if(SHARED){
   $("wbody").innerHTML=`<p>Meryl is using this to follow along with the news tonight. If you want to follow along with her, or use it to keep track of the night yourself, go for it.</p><p><b>Heads up:</b> nothing here comes from Decision Desk or anywhere online. Every result is Meryl tapping it in by hand while she watches, so it's only as up to date as she is, and she might get bored before the last race is called.</p><p>It isn't meant to track every race. It's for watching how big (hopefully) our blue wave is going to be.</p>`;
   $("wtabs").innerHTML=`<b>Blowout:</b> the 11-item checklist. <b>House:</b> 60 key districts, filled in as races are called. <b>What it means:</b> plain-English read of the night.`;
-  $("priv").textContent="Forecasts as of 3:22 p.m. ET, Nov 2, 2026. Results are entered by the host and sent to your screen through a Google Firebase database. Viewers don't sign in, and the app has no ads or tracking.";
+  $("priv").textContent="Forecasts as of 3:22 p.m. ET, Nov 2, 2026. Results are entered by Meryl and sent to your screen through a Google Firebase database. Viewers don't sign in, and the app has no ads or tracking.";
 }
 if(LIVE_OK&&!qs.has("host")){
-  $("wmode").hidden=false;$("wmode").textContent=SHARED?"Track it myself":"Follow the host live";
-  $("wok").textContent=SHARED?"Follow live":"Got it";
-  $("wbody").insertAdjacentHTML("beforeend",SHARED?`<p><b>Want to tap in results yourself?</b> Choose <b>Track it myself</b>. Your picks stay on your phone, and you can switch back any time from the link under the headline.</p>`:`<p>Right now you're tracking on your own, so you'll only see what you tap in. To see Meryl's results instead, choose <b>Follow the host live</b>, or use the link under the headline.</p>`);
+  $("wmode").hidden=false;$("wmode").textContent=SHARED?"Track it myself":"Follow Meryl live";
+  $("wok").textContent=SHARED?"Follow Meryl":"Got it";
+  $("wbody").insertAdjacentHTML("beforeend",SHARED?`<p><b>Want to tap in results yourself?</b> Choose <b>Track it myself</b>. Your picks stay on your phone, and you can switch back any time from the link under the headline.</p>`:`<p>Right now you're tracking on your own, so you'll only see what you tap in. To see Meryl's results instead, choose <b>Follow Meryl live</b>, or use the link under the headline.</p>`);
 }
 if(!storeOk&&!SHARED)$("warn").style.display="block";
 function applyTheme(){const d=document.documentElement.dataset.theme==="dark";$("themeb").textContent=d?"☀":"☾";$("themeb").setAttribute("aria-label",d?"Switch to light mode":"Switch to dark mode");document.querySelector('meta[name=theme-color]').content=d?"#030B1F":"#0A1F44";}
@@ -700,7 +700,7 @@ hostBox();applyTheme();render();go("blowout");
 if(!P.welcomed&&!qs.has("host"))$("welcome").classList.add("on");
 if(SHARED)initLive();
 let tight=false;addEventListener("scroll",()=>{const y=scrollY;if(!tight&&y>140){tight=true;document.querySelector("header").classList.add("tight");}else if(tight&&y<16){tight=false;document.querySelector("header").classList.remove("tight");}},{passive:true});
-setInterval(()=>{if(tab==="blowout")renderBlowout(calc());},60000);
+setInterval(()=>{const c=calc();$("headline").textContent=headline(c);if(tab==="blowout")renderBlowout(c);},60000);
 </script>
 </body>
 </html>
