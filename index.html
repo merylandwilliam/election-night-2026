@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Election Night 2026 Tracker</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Election Night">
+<meta name="theme-color" content="#0b1220">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%97%B3%EF%B8%8F%3C/text%3E%3C/svg%3E">
+<style>
+:root{--bg:#0b1220;--card:#131c30;--card2:#1a2540;--line:#26334f;--tx:#e9edf5;--mut:#9aa7c0;--amb:#F2B33D;--blue:#4c97ff;--bluebg:#12305e;--red:#ff6b61;--redbg:#5a1f23;--grn:#3ccf8e}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+button,.r1{touch-action:manipulation}
+html,body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;overflow-x:hidden}
+body{padding-bottom:calc(72px + env(safe-area-inset-bottom))}
+button{font:inherit;color:inherit;cursor:pointer}
+header{position:sticky;top:0;z-index:20;background:var(--bg);padding:calc(8px + env(safe-area-inset-top)) 12px 8px;border-bottom:1px solid var(--line)}
+.hrow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+.hrow h1{font-size:15px;margin:0;color:var(--amb);letter-spacing:.3px}
+.hbtns{display:flex;gap:6px}
+.ib{min-width:48px;min-height:48px;margin:-6px 0;border:0;background:none;color:var(--mut);font-size:15px;font-weight:700}
+.ib[aria-pressed=true],.ib[aria-pressed=want]{color:var(--amb)}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:6px 8px;text-align:left;min-height:52px}
+.tile small{display:block;color:var(--mut);font-size:11px}
+.tile b{font-size:17px}
+.head{margin:8px 2px 0;font-size:14px;color:var(--tx)}
+main{padding:10px 12px}
+section{display:none}section.on{display:block}
+nav{position:fixed;bottom:0;left:0;right:0;display:grid;grid-template-columns:repeat(3,1fr);background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);z-index:20}
+nav button{min-height:56px;border:0;background:none;color:var(--mut);font-weight:600;font-size:14px}
+nav button.on{color:var(--amb);box-shadow:inset 0 3px 0 var(--amb)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:12px}
+.card h2{font-size:17px;margin:0 0 4px}
+.card h3{font-size:13px;color:var(--mut);margin:12px 0 4px;text-transform:uppercase;letter-spacing:.4px}
+.cap{color:var(--mut);font-size:13px;margin:4px 0}
+.big{font-size:30px;font-weight:800}
+.info{display:none;background:var(--card2);border-radius:8px;padding:8px 10px;font-size:13px;color:var(--mut);margin:6px 0}
+.info.open{display:block}
+.iq{display:inline-block;min-width:48px;min-height:48px;border-radius:50%;border:1px solid var(--line);background:none;color:var(--mut);font-size:14px;vertical-align:middle;margin-left:4px;padding:0}
+.upnext{background:var(--card2);border-left:4px solid var(--amb);border-radius:8px;padding:8px 10px;margin-bottom:10px;font-size:14px}
+.item{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;margin-bottom:8px}
+.item.y{border-color:var(--grn)}
+.item.n{opacity:.75}
+.item .top{display:flex;gap:8px;align-items:flex-start}
+.item .num{color:var(--amb);font-weight:800;min-width:22px}
+.item .lab{font-weight:600;flex:1}
+.item.n .lab{text-decoration:line-through;color:var(--mut)}
+.item .meta{font-size:12px;color:var(--amb);margin:2px 0 0 30px}
+.item .why{font-size:13px;color:var(--mut);margin:4px 0 8px 30px}
+.btns{display:flex;gap:8px;margin-left:30px}
+.btns button{flex:1;min-height:48px;border-radius:10px;border:1px solid var(--line);background:var(--card2);font-weight:700}
+.btns button.y.on{background:var(--grn);color:#04281a;border-color:var(--grn)}
+.btns button.n.on{background:#4a5470;color:#fff;border-color:#4a5470}
+.help{margin:6px 0 0 30px;font-size:13px;color:var(--tx);background:var(--card2);border-radius:8px;padding:6px 8px}
+.help button{min-height:48px;margin-top:4px;border:1px solid var(--amb);background:none;color:var(--amb);border-radius:8px;padding:0 12px;font-weight:700}
+.bands{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0}
+.band{border:1px solid var(--line);border-radius:8px;padding:8px 4px;text-align:center;font-size:12px;color:var(--mut)}
+.band b{display:block;font-size:13px}
+.band.on{border-color:var(--amb);color:var(--tx);background:#2a2412}
+.filters{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px}
+.chip{min-height:48px;padding:0 14px;border-radius:24px;border:1px solid var(--line);background:var(--card);white-space:nowrap}
+.chip.on{background:var(--amb);color:#201600;border-color:var(--amb);font-weight:700}
+#q{width:100%;min-height:48px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--tx);padding:0 12px;font-size:16px;margin:4px 0 8px}
+.sec{display:flex;justify-content:space-between;align-items:baseline;margin:14px 2px 6px;font-weight:700;font-size:14px}
+.sec span{color:var(--mut);font-weight:600;font-size:13px}
+.maj{border-top:2px dashed var(--amb);color:var(--amb);text-align:center;font-size:12px;font-weight:700;padding:3px 0;margin:8px 0}
+.row{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin-bottom:6px}
+.row.D{background:var(--bluebg);border-color:var(--blue)}
+.row.R{background:var(--redbg);border-color:var(--red)}
+.r1{display:flex;gap:8px;align-items:center;min-height:44px;flex-wrap:wrap;cursor:pointer}
+.seat{color:var(--amb);font-weight:800;font-size:13px}
+.dist{font-weight:700;font-size:16px}
+.chipx{font-size:11px;border-radius:6px;padding:1px 6px;border:1px solid var(--line);color:var(--mut)}
+.stat{margin-left:auto;font-weight:800;font-size:13px}
+.stat.D{color:var(--blue)}.stat.R{color:var(--red)}
+.r2{display:flex;align-items:center;gap:8px;margin-top:4px}
+.pct{flex:1}
+.pct small{color:var(--mut);font-size:12px}
+.bar{height:6px;background:#2b3652;border-radius:3px;overflow:hidden;margin-top:2px}
+.bar i{display:block;height:100%;background:var(--blue)}
+.dr{display:flex;gap:6px}
+.dr button{width:52px;min-height:48px;border-radius:10px;border:1px solid var(--line);background:var(--card2);font-weight:800;font-size:18px}
+.dr .d.on{background:var(--blue);color:#001a3a;border-color:var(--blue)}
+.dr .r.on{background:var(--red);color:#3a0000;border-color:var(--red)}
+.hint{color:var(--mut);font-size:16px;margin-left:2px}
+.exp{font-size:13px;color:var(--mut);margin-top:6px;border-top:1px solid var(--line);padding-top:6px}
+.ladder{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;margin:8px 0}
+.cell{aspect-ratio:1;border-radius:6px;background:#2b3652;font-size:10px;display:flex;align-items:center;justify-content:center;color:var(--mut)}
+.cell.D{background:var(--blue);color:#001a3a;font-weight:800}.cell.R{background:var(--red);color:#3a0000;font-weight:800}
+.cell.m{outline:2px solid var(--amb)}
+.track{position:relative;height:18px;background:#2b3652;border-radius:9px;margin:14px 0 4px}
+.track .rg{position:absolute;top:0;bottom:0;background:#4c97ff88;border-radius:9px}
+.track .pj{position:absolute;top:-4px;bottom:-4px;width:4px;background:#fff;border-radius:2px}
+.track .ml{position:absolute;top:-8px;bottom:-8px;width:0;border-left:2px dashed var(--amb)}
+.scale{display:flex;justify-content:space-between;font-size:11px;color:var(--mut)}
+.li{font-size:14px;padding:4px 0;border-bottom:1px solid var(--line)}
+.btn{min-height:48px;border-radius:10px;border:1px solid var(--line);background:var(--card2);padding:0 16px;font-weight:700;margin:0 6px 6px 0}
+.btn.dng{border-color:var(--red);color:var(--red)}
+#toast{position:fixed;left:12px;right:12px;bottom:calc(68px + env(safe-area-inset-bottom));background:#e9edf5;color:#0b1220;border-radius:10px;padding:0 6px 0 14px;display:none;align-items:center;justify-content:space-between;z-index:40;min-height:48px;font-weight:600}
+#toast button{min-height:48px;min-width:64px;border:0;background:none;color:#0b5fd1;font-weight:800}
+.modal{position:fixed;inset:0;background:#000b;z-index:50;display:none;overflow-y:auto;padding:16px}
+.modal.on{display:block}
+.modal .box{background:var(--card);border-radius:14px;padding:16px;max-width:520px;margin:0 auto}
+.modal h2{margin-top:0}
+.modal p,.modal li{font-size:14px}
+.warn{background:#3a2c0b;color:var(--amb);font-size:13px;padding:6px 12px;display:none}
+a{color:var(--amb)}
+.live{margin:6px 2px 0;font-size:12px;font-weight:700;color:var(--mut)}
+.live.ok{color:var(--grn)}.live.host{color:var(--amb)}.live.bad{color:var(--red)}
+button:disabled{cursor:default}
+.btns button:disabled:not(.on),.dr button:disabled:not(.on){opacity:.3}
+.inp{width:100%;min-height:48px;border-radius:10px;border:1px solid var(--line);background:var(--card2);color:var(--tx);padding:0 12px;font-size:16px;margin:0 0 8px}
+</style>
+</head>
+<body>
+<div class="warn" id="warn">Your picks won't be saved if you close this page.</div>
+<header>
+  <div class="hrow"><h1>ELECTION NIGHT 2026</h1>
+    <div class="hbtns"><button class="ib" id="wake" aria-pressed="false" hidden>Screen on</button><button class="ib" id="helpb" aria-label="How this works">?</button></div></div>
+  <div class="tiles">
+    <button class="tile" data-go="blowout"><small>Blowout meter</small><b id="t1"></b></button>
+    <button class="tile" data-go="house"><small>House calls</small><b id="t2"></b></button>
+    <button class="tile" data-go="means"><small>Projected Dem seats</small><b id="t3"></b></button>
+  </div>
+  <div class="head" id="headline"></div>
+  <div class="live" id="live" hidden></div>
+</header>
+<main>
+  <section id="blowout"></section>
+  <section id="house">
+    <div class="filters" id="filters"></div>
+    <input id="q" type="search" placeholder="Search: PA, NV-03 or a member name" aria-label="Search">
+    <div id="list"></div>
+  </section>
+  <section id="means"></section>
+</main>
+<nav>
+  <button data-go="blowout" class="on">Blowout</button>
+  <button data-go="house">House</button>
+  <button data-go="means">What it means</button>
+</nav>
+<div class="modal" id="hostm"><div class="box">
+  <h2>Host sign-in</h2>
+  <p>Sign in with the host account set up in Firebase. Only that account can enter results.</p>
+  <form id="hostf"><input class="inp" id="he" type="email" autocomplete="username" placeholder="Email" required><input class="inp" id="hp" type="password" autocomplete="current-password" placeholder="Password" required>
+  <button class="btn" type="submit">Sign in</button><button class="btn" type="button" id="hcancel">Cancel</button><p class="cap" id="herr"></p></form>
+</div></div>
+<div id="toast" role="status" aria-live="polite"><span id="tmsg"></span><button id="undo">Undo</button></div>
+<div class="modal" id="welcome"><div class="box">
+  <h2>How this works</h2>
+  <div id="wbody"><p>When a network or Decision Desk calls a race, tap it here. The app keeps score and tells you what the results mean for Democrats' chances at the House and whether the night is turning into a blowout.</p>
+  <p>Your taps stay on your phone. Nobody else sees them.</p></div>
+  <p id="wtabs"><b>Blowout:</b> the 11-item checklist. <b>House:</b> 60 key districts, tap D or R when called. <b>What it means:</b> plain-English read of the night.</p>
+  <button class="btn" id="wok">Got it</button><button class="btn" id="aboutb">About and glossary</button>
+</div></div>
+<div class="modal" id="about"><div class="box">
+  <h2>About</h2>
+  <h3>Glossary</h3>
+  <ul>
+  <li><b>Seat #</b>: where a district ranks by how winnable it is for Democrats. Seat #218 is the one that would give Democrats a majority if they won it and every easier seat.</li>
+  <li><b>Chance Dems win</b>: the average of four forecasts (DDHQ, Polymarket, Kalshi, Swingometer) as of 3:22 p.m. ET on Nov 2.</li>
+  <li><b>Majority line</b>: 218 seats. Any seat ranked 218 or lower is one Democrats likely need.</li>
+  <li><b>Surprise win</b>: a Democratic win where the forecasts gave under 40%.</li>
+  <li><b>Setback</b>: a Republican win where the forecasts gave Democrats over 60%.</li>
+  <li><b>Pickup / Hold / Lost seat</b>: a Democratic win in a Republican-held seat, a Democratic win in a Democratic-held seat, a Republican win in a Democratic-held seat.</li>
+  </ul>
+  <p>"Held by" shows who holds the district number today (119th Congress). In states with new maps, a "Lost seat" may reflect redistricting more than a shift in voters. Several Democratic-held seats (such as TX-35, FL-09, AL-02) rank low, consistent with new lines making them harder.</p>
+  <h3>Credits</h3>
+  <p>DDHQ 2026 House forecast; Polymarket and Kalshi via newsmarkets.org; Swingometer at default settings (D+8.5). Watchlist by <a href="https://patrickruffini.com" target="_blank" rel="noopener">The Intersection (patrickruffini.com)</a>. Checklist by Split Ticket (<a href="https://x.com/splitticketpod" target="_blank" rel="noopener">@splitticketpod</a>). Seat holders from Wikipedia's 119th Congress page.</p>
+  <p id="priv">Forecasts as of 3:22 p.m. ET, Nov 2, 2026. This app does not pull live results and sends nothing anywhere.</p>
+  <div id="hostbox"></div>
+  <button class="btn" id="aok">Close</button>
+</div></div>
+<script>
+const SEATS=[{"d":"NV-03","n":201,"h":"D","m":"Susie Lee","s":[86,94,null,93]},{"d":"NY-03","n":202,"h":"D","m":"Tom Suozzi","s":[93,92,null,92]},{"d":"WA-03","n":203,"h":"D","m":"Marie Gluesenkamp Perez","s":[91,90,null,96]},{"d":"TX-28","n":204,"h":"D","m":"Henry Cuellar","s":[93,92,null,82]},{"d":"OH-01","n":205,"h":"D","m":"Greg Landsman","s":[83,96,null,84]},{"d":"NM-02","n":206,"h":"D","m":"Gabe Vasquez","s":[84,92,null,95]},{"d":"NJ-07","n":207,"h":"R","m":"Thomas Kean Jr.","s":[85,94,null,88]},{"d":"NY-04","n":208,"h":"D","m":"Laura Gillen","s":[89,92,null,91]},{"d":"IA-01","n":209,"h":"R","m":"Mariannette Miller-Meeks","s":[85,93,null,81]},{"d":"AZ-06","n":210,"h":"R","m":"Juan Ciscomani","s":[84,89,null,88]},{"d":"CA-22","n":211,"h":"R","m":"David Valadao","s":[84,94,null,65]},{"d":"VA-02","n":212,"h":"R","m":"Jen Kiggans","s":[85,90,null,78]},{"d":"WI-03","n":213,"h":"R","m":"Derrick Van Orden","s":[80,88,null,84]},{"d":"CO-08","n":214,"h":"R","m":"Gabe Evans","s":[83,86,null,85]},{"d":"TX-34","n":215,"h":"D","m":"Vicente Gonzalez","s":[78,88,null,70]},{"d":"PA-07","n":216,"h":"R","m":"Ryan Mackenzie","s":[76,86,null,81]},{"d":"AZ-01","n":217,"h":"R","m":"David Schweikert","s":[76,82,null,81]},{"d":"IA-03","n":218,"h":"R","m":"Zach Nunn","s":[73,86,null,79]},{"d":"PA-08","n":219,"h":"R","m":"Rob Bresnahan","s":[66,88,null,59]},{"d":"OH-09","n":220,"h":"D","m":"Marcy Kaptur","s":[75,80,null,74]},{"d":"NC-01","n":221,"h":"D","m":"Don Davis","s":[65,88,null,58]},{"d":"MI-07","n":222,"h":"R","m":"Tom Barrett","s":[80,80,null,62]},{"d":"PA-10","n":223,"h":"R","m":"Scott Perry","s":[71,79,null,80]},{"d":"OH-07","n":224,"h":"R","m":"Max Miller","s":[54,86,84,61]},{"d":"FL-25","n":225,"h":"D","m":"Debbie Wasserman Schultz","s":[70,82,81,58]},{"d":"FL-14","n":226,"h":"D","m":"Kathy Castor","s":[73,78,74,66]},{"d":"MI-10","n":227,"h":"R","m":"John James","s":[68,76,null,68]},{"d":"NC-11","n":228,"h":"R","m":"Chuck Edwards","s":[59,86,null,54]},{"d":"NY-17","n":229,"h":"R","m":"Mike Lawler","s":[61,60,null,69]},{"d":"TX-15","n":230,"h":"R","m":"Monica De La Cruz","s":[49,88,null,23]},{"d":"FL-22","n":231,"h":"D","m":"Lois Frankel","s":[49,74,71,49]},{"d":"TX-35","n":232,"h":"D","m":"Greg Casar","s":[51,72,null,49]},{"d":"IA-02","n":233,"h":"R","m":"Ashley Hinson","s":[52,59,71,52]},{"d":"PA-01","n":234,"h":"R","m":"Brian Fitzpatrick","s":[45,56,null,55]},{"d":"ME-02","n":235,"h":"D","m":"Jared Golden","s":[45,46,null,56]},{"d":"VA-01","n":236,"h":"R","m":"Rob Wittman","s":[36,64,null,47]},{"d":"MI-04","n":237,"h":"R","m":"Bill Huizenga","s":[41,60,null,45]},{"d":"MT-01","n":238,"h":"R","m":"Ryan Zinke","s":[47,62,null,33]},{"d":"CO-03","n":239,"h":"R","m":"Jeff Hurd","s":[43,38,null,57]},{"d":"AZ-02","n":240,"h":"R","m":"Eli Crane","s":[28,44,null,57]},{"d":"SC-01","n":241,"h":"R","m":"Nancy Mace","s":[36,50,47,37]},{"d":"KY-06","n":242,"h":"R","m":"Andy Barr","s":[40,56,56,27]},{"d":"AL-02","n":243,"h":"D","m":"Shomari Figures","s":[31,48,45,37]},{"d":"WI-01","n":244,"h":"R","m":"Bryan Steil","s":[38,36,null,54]},{"d":"MO-02","n":245,"h":"R","m":"Ann Wagner","s":[35,38,38,47]},{"d":"TX-23","n":246,"h":"R","m":"Tony Gonzales","s":[30,46,45,28]},{"d":"FL-13","n":247,"h":"R","m":"Anna Paulina Luna","s":[30,36,null,46]},{"d":"CO-05","n":248,"h":"R","m":"Jeff Crank","s":[25,44,44,36]},{"d":"MN-01","n":249,"h":"R","m":"Brad Finstad","s":[34,36,39,32]},{"d":"NV-02","n":250,"h":"R","m":"Mark Amodei","s":[28,36,40,41]},{"d":"FL-07","n":251,"h":"R","m":"Cory Mills","s":[31,34,35,39]},{"d":"FL-09","n":252,"h":"D","m":"Darren Soto","s":[41,35,34,28]},{"d":"VA-05","n":253,"h":"R","m":"John McGuire","s":[30,36,41,28]},{"d":"CO-04","n":254,"h":"R","m":"Lauren Boebert","s":[19,40,39,41]},{"d":"NC-03","n":255,"h":"R","m":"Greg Murphy","s":[31,42,39,25]},{"d":"OH-15","n":256,"h":"R","m":"Mike Carey","s":[21,37,38,39]},{"d":"NY-01","n":257,"h":"R","m":"Nick LaLota","s":[38,20,21,39]},{"d":"FL-27","n":258,"h":"R","m":"María Elvira Salazar","s":[29,44,36,13]},{"d":"FL-16","n":259,"h":"R","m":"Vern Buchanan","s":[27,null,23,34]},{"d":"NC-07","n":260,"h":"R","m":"David Rouzer","s":[25,25,23,29]}];
+const SRC=["DDHQ","Polymarket","Kalshi","Swingometer"];
+const ITEMS=[
+{id:1,l:"South Carolina is too close to call at 8:00",t:"7:00 PM",m:1140,r:"SC Senate",w:"A deep-red state running close an hour after polls close means a big national swing."},
+{id:2,l:"Bottoms wins the Georgia governor's race",t:"7:00 PM",m:1140,r:"GA Governor",w:"Georgia is a true swing state; a win here is a solid baseline for a good night."},
+{id:3,l:"Cooper wins North Carolina by 10+",t:"7:30 PM",m:1170,r:"NC Senate",w:"Winning is expected; winning by double digits signals a wave."},
+{id:4,l:"Brown AND Acton both win Ohio",t:"7:30 PM",m:1170,r:"OH Senate + Governor",w:"Ohio has trended Republican; sweeping both top races would be a major overperformance."},
+{id:5,l:"Collins loses in Maine",t:"8:00 PM",m:1200,r:"ME Senate",w:"Collins has outrun her party for decades; beating her is a key Senate pickup."},
+{id:6,l:"Talarico wins Texas",t:"8:00 PM",m:1200,r:"TX Senate",w:"Democrats haven't won statewide in Texas since 1994."},
+{id:7,l:"Hamilton wins Kansas",t:"8:00 PM",m:1200,r:"KS Senate",w:"Kansas is a reach state; a win here suggests a broad wave."},
+{id:8,l:"Democrats flip 2 of the 3 Pennsylvania seats",t:"8:00 PM",m:1200,r:"PA House",w:"These suburban and exurban seats are a bellwether for the House."},
+{id:9,l:"Turek wins Iowa",t:"9:00 PM",m:1260,r:"IA Senate",w:"Iowa has moved sharply right; a win here is a strong overperformance."},
+{id:10,l:"Peltola wins Alaska",t:"1:00 AM",m:1500,r:"AK Senate",w:"Late-night result; a win confirms the wave reached even Trump +10 territory."},
+{id:11,l:"Democrats gain 20+ House seats",t:"Days later",m:null,r:"US House",w:"The final scorecard. Won't be known tonight."}];
+const PA=["PA-07","PA-08","PA-10"];
+// Live mode: paste the firebaseConfig values from Firebase here. Leave databaseURL empty for per-person mode.
+const CFG={apiKey:"AIzaSyCnDwDUiRgyKlhr0F-vCVqk1jhdlvdYGU4",authDomain:"election-night-2026-bf6a3.firebaseapp.com",databaseURL:"https://election-night-2026-bf6a3-default-rtdb.firebaseio.com",projectId:"election-night-2026-bf6a3",appId:"1:977606623527:web:bd88eb2b30dbe3c8d5a902"};
+const FB_VER="10.12.2",PATH="night2026";
+const KEY="en2026.v1",PREF="en2026.prefs",CACHE="en2026.live";
+const qs=new URLSearchParams(location.search);
+const SHARED=!!CFG.databaseURL&&!qs.has("solo");
+SEATS.forEach(s=>{const v=s.s.filter(x=>x!==null);s.p=v.reduce((a,b)=>a+b,0)/v.length/100;});
+const BY={};SEATS.forEach(s=>BY[s.d]=s);
+let S={b:{},h:{}},P={welcomed:false},storeOk=true;
+let fb=null,hostUser=null,loaded=false,connected=false,everConnected=false,liveErr=false,canEdit=!SHARED;
+const lsGet=k=>{try{const x=localStorage.getItem(k);return x?JSON.parse(x):null;}catch(e){storeOk=false;return null;}};
+const lsSet=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch(e){storeOk=false;}};
+const objOf=x=>{if(!x)return {};if(Array.isArray(x)){const o={};x.forEach((v,i)=>{if(v)o[i]=v;});return o;}return x;};
+const norm=o=>({b:objOf(o&&o.b),h:objOf(o&&o.h),u:(o&&o.u)||null});
+{const o=lsGet(SHARED?CACHE:KEY);if(o&&o.b&&o.h)S=norm(o);const p=lsGet(PREF);if(p)P=p;else if(o&&o.welcomed)P.welcomed=true;}
+function save(){
+  if(SHARED){lsSet(CACHE,S);push();return;}
+  lsSet(KEY,S);if(!storeOk)document.getElementById("warn").style.display="block";
+}
+function savePrefs(){lsSet(PREF,P);}
+function push(){
+  if(!fb||!canEdit)return;
+  S.u=Date.now();
+  fb.set(fb.ref(fb.db,PATH),{b:S.b,h:S.h,u:S.u}).catch(()=>showToast("That didn't send. Check that you're signed in as host.",null));
+}
+const dis=()=>canEdit?"":"disabled";
+const $=id=>document.getElementById(id);
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmtT=ts=>new Date(ts).toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit",timeZone:"America/New_York"})+" ET";
+const pc=p=>Math.round(p*100);
+let tab="blowout",filter="All",query="",toastT=null,snap=null;
+const openInfo=new Set(),expanded=new Set();
+
+function snapshot(){return JSON.stringify(S);}
+function mutate(fn,msg){if(!canEdit)return;const before=snapshot();const m=fn()||msg;save();render();showToast(m,before);}
+function showToast(msg,before){snap=before;$("undo").style.display=before?"":"none";$("tmsg").textContent=msg;$("toast").style.display="flex";clearTimeout(toastT);toastT=setTimeout(()=>$("toast").style.display="none",5000);}
+$("undo").onclick=()=>{if(snap&&canEdit){S=JSON.parse(snap);save();render();}$("toast").style.display="none";};
+
+function setHouse(d,r){
+  mutate(()=>{if(S.h[d]&&S.h[d].r===r){delete S.h[d];return `${d} cleared`;}S.h[d]={r,t:Date.now()};return `${d} marked ${r==="D"?"D win":"R win"}`;});
+}
+function setItem(id,v){
+  mutate(()=>{if(S.b[id]&&S.b[id].v===v){delete S.b[id];return `Item ${id} back to waiting`;}S.b[id]={v,t:Date.now()};return `Item ${id} marked ${v==="y"?"Yes":"No"}`;});
+}
+
+function calc(){
+  const c={dWins:0,rWins:0,expCalled:0,unc:0,varSum:0,calls:0,surp:[],set:[],pick:0,lost:0,deepD:null,easyR:null,sumUnc:0,brier:SRC.map(()=>({s:0,n:0}))};
+  SEATS.forEach(s=>{const h=S.h[s.d];
+    if(!h){c.sumUnc+=s.p;c.varSum+=s.p*(1-s.p);c.unc++;return;}
+    c.calls++;c.expCalled+=s.p;const o=h.r==="D"?1:0;
+    if(o){c.dWins++;if(s.p<.4)c.surp.push([s,h.t]);if(s.h==="R")c.pick++;if(!c.deepD||s.n>c.deepD.n)c.deepD=s;}
+    else{c.rWins++;if(s.p>.6)c.set.push([s,h.t]);if(s.h==="D")c.lost++;if(!c.easyR||s.n<c.easyR.n)c.easyR=s;}
+    s.s.forEach((v,i)=>{if(v!==null){c.brier[i].s+=(v/100-o)**2;c.brier[i].n++;}});
+  });
+  c.proj=200+c.dWins+c.sumUnc;c.rad=1.28*Math.sqrt(c.varSum);
+  c.diff=c.dWins-c.expCalled;
+  c.yes=ITEMS.filter(i=>S.b[i.id]&&S.b[i.id].v==="y").length;
+  c.no=ITEMS.filter(i=>S.b[i.id]&&S.b[i.id].v==="n").length;
+  c.wait=11-c.yes-c.no;
+  c.surp.sort((a,b)=>b[1]-a[1]);c.set.sort((a,b)=>b[1]-a[1]);
+  return c;
+}
+function headline(c){
+  let h;
+  if(c.calls<3)h=nowET()<1200?"Early. Polls are still closing. Check back after 8:00 ET.":"Too early to read. Mark a few more House calls.";
+  else if(c.proj>=218&&c.diff>=.5)h="Running ahead of forecasts and on track for the majority.";
+  else if(c.proj>=218)h="On track for the majority, about in line with forecasts.";
+  else if(c.diff<=-.5)h="Behind forecasts so far. The majority is at risk.";
+  else h="Close to the majority line. Too early to call.";
+  if(c.yes>=6)h+=` Blowout watch: ${c.yes} of 11.`;
+  return h;
+}
+function info(id,txt){return `<button class="iq" data-i="${id}" aria-label="More detail">ⓘ</button><div class="info ${openInfo.has(id)?"open":""}" id="i_${id}">${txt}</div>`;}
+
+function nowET(){
+  const p=new Intl.DateTimeFormat("en-US",{timeZone:"America/New_York",year:"numeric",month:"numeric",day:"numeric",hour:"numeric",minute:"numeric",hour12:false}).formatToParts(new Date());
+  const g=t=>+p.find(x=>x.type===t).value;
+  const h=g("hour")%24;
+  const day=Date.UTC(g("year"),g("month")-1,g("day"));
+  return ((day-Date.UTC(2026,10,3))/864e5)*1440+h*60+g("minute");
+}
+function renderBlowout(c){
+  const pend=ITEMS.filter(i=>i.m&&!S.b[i.id]);
+  const now=nowET();
+  let nxt=pend.filter(i=>i.m>now);
+  let up="";
+  if(!pend.length)up="All of tonight's checklist items are marked.";
+  else{
+    const pool=nxt.length?nxt:pend;
+    const m=Math.min(...pool.map(i=>i.m));
+    const grp=pool.filter(i=>i.m===m);
+    up=`Up next: <b>${grp[0].t.replace(" PM"," ET").replace(" AM"," AM ET")}</b>, ${grp.length} item${grp.length>1?"s":""} to watch.`;
+    if(!nxt.length)up=`Still waiting on ${pend.length} item${pend.length>1?"s":""}. Earliest: <b>${grp[0].t.replace(" PM"," ET").replace(" AM"," AM ET")}</b>.`;
+  }
+  const max=c.yes+c.wait;
+  let html=`<div class="upnext">${up}</div>`;
+  ITEMS.forEach(i=>{
+    const st=S.b[i.id];const v=st&&st.v;
+    let help="";
+    if(i.id===8){
+      const parts=PA.map(d=>{const h=S.h[d];return `${d}: ${h?(h.r==="D"?"D win":"R win"):"waiting"}`;});
+      const dn=PA.filter(d=>S.h[d]&&S.h[d].r==="D").length;
+      help=`<div class="help">${parts.join(" · ")}${dn>=2&&v!=="y"&&canEdit?`<br>Two of three are D wins. <button data-yes8="1">Mark this Yes?</button>`:""}</div>`;
+    }
+    if(i.id===11){
+      help=`<div class="help">Net Dem gain on the watchlist so far: <b>${c.pick-c.lost>0?"+":""}${c.pick-c.lost}</b> (${c.pick} pickup${c.pick===1?"":"s"}, ${c.lost} lost). Item 11 counts all 435 seats, so this is a partial count.</div>`;
+    }
+    html+=`<div class="item ${v||""}"><div class="top"><span class="num">${i.id}</span><span class="lab">${i.l}${v==="y"?" ✓":""}</span></div>
+    <div class="meta">${i.t==="Days later"?"Days later":"Polls close "+i.t.replace(" PM"," ET").replace(" AM"," AM ET")} · ${i.r}${st?" · marked "+fmtT(st.t):""}</div>
+    <div class="why">${i.w}</div>
+    <div class="btns"><button class="y ${v==="y"?"on":""}" ${dis()} data-b="${i.id}" data-v="y" aria-pressed="${v==="y"}">Yes</button><button class="n ${v==="n"?"on":""}" ${dis()} data-b="${i.id}" data-v="n" aria-pressed="${v==="n"}">No</button></div>${help}</div>`;
+  });
+  const band=c.yes>=8?2:c.yes>=4?1:0;
+  html+=`<div class="card"><h2>${["GOP holds the line","Good Dem night","Blowout"][band]}</h2>
+  <div class="bands"><div class="band ${band===0?"on":""}"><b>0 to 3</b>GOP holds the line</div><div class="band ${band===1?"on":""}"><b>4 to 7</b>Good Dem night</div><div class="band ${band===2?"on":""}"><b>8 to 11</b>Blowout</div></div>
+  <p class="cap">${c.yes} Yes · ${c.no} No · ${c.wait} waiting. Still possible: up to ${max} of 11.</p>
+  ${max<8?`<p class="cap">A full blowout is now out of reach, but a good Dem night is still on the table.</p>`:""}</div>`;
+  $("blowout").innerHTML=html;
+}
+
+function tag(s,r){
+  if(r==="D")return s.h==="R"?"Pickup":"Hold";
+  return s.h==="D"?"Lost seat":"";
+}
+function secTally(lo,hi){let d=0,r=0;SEATS.forEach(s=>{if(s.n>=lo&&s.n<=hi&&S.h[s.d]){S.h[s.d].r==="D"?d++:r++;}});return `D ${d} · R ${r}`;}
+function renderHouse(c){
+    $("filters").innerHTML=[["All","All"],["Waiting","Waiting"],["Called","Called"],["Surprises","Surprises and setbacks"]].map(([f,l])=>`<button class="chip ${f===filter?"on":""}" data-f="${f}">${l}</button>`).join("");
+  const q=query.trim().toLowerCase();
+  const surp=new Set(c.surp.concat(c.set).map(x=>x[0].d));
+  let out="";const secs=[[201,220,"Seats 201-220: Dems should win these"],[221,240,"Seats 221-240: The battleground"],[241,260,"Seats 241-260: Wave territory"]];
+  secs.forEach(([lo,hi,t])=>{
+    let rows="";
+    SEATS.filter(s=>s.n>=lo&&s.n<=hi).forEach(s=>{
+      const h=S.h[s.d];
+      if(filter==="Waiting"&&h)return;if(filter==="Called"&&!h)return;if(filter==="Surprises"&&!surp.has(s.d))return;
+      if(q){const qd=q.replace(/[\s-]/g,""),sd=s.d.toLowerCase().replace("-","");if(!(sd.startsWith(qd)||(q.length>=3&&s.m.toLowerCase().includes(q))))return;}
+      const tg=h?tag(s,h.r):"";
+      const ex=expanded.has(s.d);
+      let e="";
+      if(ex){
+        let ifD=h?(h.r==="D"?c.proj:c.proj+1):c.proj+(1-s.p);
+        e=`<div class="exp">${s.m} (${s.h==="D"?"Dem":"GOP"}-held)<br>${SRC.map((n,i)=>`${n}: ${s.s[i]===null?"no quote":s.s[i]+"%"}`).join(" · ")}<br>If Democrats win this seat, they are on pace for about ${Math.round(ifD)} seats.</div>`;
+      }
+      rows+=`<div class="row ${h?h.r:""}"><div class="r1" data-x="${s.d}" role="button" aria-expanded="${ex}" aria-label="${s.d} details"><span class="seat">#${s.n}</span><span class="dist">${s.d}</span><span class="chipx">${s.h}-held</span>${tg?`<span class="chipx" style="color:var(--amb);border-color:var(--amb)">${tg}</span>`:""}<span class="stat ${h?h.r:""}">${h?(h.r==="D"?"D win":"R win"):""}</span><span class="hint" aria-hidden="true">${ex?"▴":"▾"}</span></div>
+      <div class="r2"><div class="pct"><small>Chance Dems win: <b style="color:var(--tx)">${pc(s.p)}%</b></small><div class="bar"><i style="width:${pc(s.p)}%"></i></div></div>
+      <div class="dr"><button class="d ${h&&h.r==="D"?"on":""}" ${dis()} data-h="${s.d}" data-r="D" aria-label="${s.d} Democratic win" aria-pressed="${!!(h&&h.r==="D")}">D</button><button class="r ${h&&h.r==="R"?"on":""}" ${dis()} data-h="${s.d}" data-r="R" aria-label="${s.d} Republican win" aria-pressed="${!!(h&&h.r==="R")}">R</button></div></div>${e}</div>`;
+      if(s.n===218&&!q&&filter!=="Called"&&filter!=="Surprises")rows+=`<div class="maj">Majority line: 218 seats</div>`;
+    });
+    if(rows)out+=`<div class="sec">${t}<span>${secTally(lo,hi)}</span></div>`+rows;
+  });
+  $("list").innerHTML=out||`<p class="cap">No seats match.</p>`;
+}
+
+function renderMeans(c){
+  const proj=Math.round(c.proj),lo=Math.max(200+c.dWins,Math.round(c.proj-c.rad)),hi=Math.min(200+c.dWins+c.unc,Math.round(c.proj+c.rad));
+  const gap=proj-218;
+  const sc=v=>((Math.min(Math.max(v,200),260)-200)/60*100);
+  const lad=SEATS.map(s=>{const h=S.h[s.d];return `<div class="cell ${h?h.r:""} ${s.n===218?"m":""}" title="${s.d}">${h?h.r:s.n===218?"218":""}</div>`;}).join("");
+  let c1=`<div class="card"><h2>${gap===0?`On track for about ${proj} seats, right at the majority line.`:`On track for about ${proj} seats, ${gap>0?gap+" above":-gap+" below"} the majority.`}</h2>
+  <div class="big">${proj} <small style="font-size:14px;color:var(--mut)">projected · 218 needed</small></div>
+  <div class="track"><div class="rg" style="left:${sc(lo)}%;width:${Math.max(sc(hi)-sc(lo),1)}%"></div><div class="ml" style="left:${sc(218)}%"></div><div class="pj" style="left:calc(${sc(proj)}% - 2px)"></div></div>
+  <div class="scale"><span>200</span><span style="color:var(--amb)">218</span><span>260</span></div>
+  <p class="cap">Rough 80% range: ${lo} to ${hi} seats.${info("m1","Projected seats = 200 + Democratic wins you marked + the sum of 'chance Dems win' for seats still waiting. It assumes seats ranked 200 and below go Democratic and seats above 260 go Republican. The range is rough because results move together on a wave night, so real uncertainty is wider.")}</p>
+  <h3>The ladder</h3><div class="ladder">${lad}</div>
+  <p class="cap">Each box is one watchlist seat, easiest first. Blue deep into the right side means Democrats are winning hard seats.</p>
+  <p class="cap">${c.deepD?`Democrats have won as deep as Seat #${c.deepD.n}. `:"No Democratic wins marked yet. "}${c.easyR?`The easiest seat they lost is Seat #${c.easyR.n}.`:"No losses marked yet."}</p></div>`;
+  let c2;
+  if(c.calls<3)c2=`<div class="card"><h2>Ahead or behind the forecasts?</h2><p class="cap">Need a few more calls to tell.</p></div>`;
+  else{
+    const d=c.diff;
+    c2=`<div class="card"><h2>${Math.abs(d)<.5?"Democrats are running about even with forecasts.":`Democrats are running ${Math.abs(d).toFixed(1)} seats ${d>0?"better":"worse"} than forecasts in the races called so far.`}</h2>
+    <p class="cap">Forecasts expected Democrats to win ${c.expCalled.toFixed(1)} of the ${c.calls} called. They've won ${c.dWins}.${info("m2","Expected wins = the sum of 'chance Dems win' over the seats you have marked. Compared with the Democratic wins you marked.")}</p></div>`;
+  }
+  const li=(a,k)=>a.length?a.map(([s,t])=>`<div class="li"><b>${s.d}</b> (Seat #${s.n}) · Forecasts gave Dems ${pc(s.p)}%</div>`).join(""):`<p class="cap">${k}</p>`;
+  const c3=`<div class="card"><h2>Surprises and setbacks</h2><h3>Surprise wins</h3>${li(c.surp,"No surprises yet.")}<h3>Setbacks</h3>${li(c.set,"No setbacks yet.")}
+  <p class="cap">Surprise: a Democratic win the forecasts gave under 40%. Setback: a Republican win where Democrats were over 60%. 40% to 60% are toss-ups and never count.</p></div>`;
+  let c4;
+  const rk=c.brier.map((b,i)=>({n:SRC[i],b:b.n?b.s/b.n:null,k:b.n})).filter(x=>x.k>=3).sort((a,b)=>a.b-b.b);
+  if(c.calls<5||!rk.length)c4=`<div class="card"><h2>Which forecast is getting it right?</h2><p class="cap">Shows after 5 calls.</p></div>`;
+  else{
+    const r=rk;
+    c4=`<div class="card"><h2>${r[0].n} has been closest so far.</h2>
+    ${r.map((x,i)=>`<div class="li">${i+1}. ${x.n} <span class="cap">(${x.k} race${x.k===1?"":"s"})</span></div>`).join("")}
+    <p class="cap">Ranked most to least accurate on the races you've marked.${info("m4","Score = average of (forecast - result)^2 for each called seat, where result is 1 for a D win and 0 for an R win. Lower is better (Brier score). Kalshi has fewer quotes, so it is scored on fewer races.")}</p></div>`;
+  }
+  $("means").innerHTML=c1+c2+c3+c4+`<div class="card"><button class="btn" id="share">Share my results</button><button class="btn" id="abt2">About</button>${canEdit?`<button class="btn dng" id="reset">Start over</button>`:""}<p class="cap" id="sh"></p></div>`;
+}
+
+function render(){
+  const c=calc();
+  $("t1").textContent=`${c.yes} / 11`;
+  $("t2").textContent=`D ${c.dWins} · R ${c.rWins} of 60`;
+  $("t3").textContent=`~${Math.round(c.proj)}`;
+  $("headline").textContent=headline(c);
+  renderBlowout(c);renderHouse(c);renderMeans(c);liveBar();
+}
+function go(t){tab=t;document.querySelectorAll("section").forEach(s=>s.classList.toggle("on",s.id===t));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.go===t));window.scrollTo(0,0);}
+
+document.addEventListener("click",e=>{
+  if(e.target.classList&&e.target.classList.contains("modal")){e.target.classList.remove("on");P.welcomed=true;savePrefs();return;}
+  const t=e.target.closest("button,[data-x]");if(!t)return;
+  if(t.dataset.go){go(t.dataset.go);return;}
+  if(t.dataset.b){setItem(+t.dataset.b,t.dataset.v);return;}
+  if(t.dataset.yes8){mutate(()=>{S.b[8]={v:"y",t:Date.now()};},"Item 8 marked Yes");return;}
+  if(t.dataset.h){setHouse(t.dataset.h,t.dataset.r);return;}
+  if(t.dataset.f){filter=t.dataset.f;render();return;}
+  if(t.dataset.i){const id=t.dataset.i;openInfo.has(id)?openInfo.delete(id):openInfo.add(id);$("i_"+id).classList.toggle("open");return;}
+  if(t.dataset.x){const d=t.dataset.x;expanded.has(d)?expanded.delete(d):expanded.add(d);render();return;}
+  if(t.id==="share")shareText();
+  if(t.id==="reset"&&canEdit){if(confirm(SHARED?"Clear every result for everyone watching?":"Clear every pick and start over?")){S={b:{},h:{}};save();render();}}
+  if(t.id==="helpb")$("welcome").classList.add("on");
+  if(t.id==="wok"){$("welcome").classList.remove("on");P.welcomed=true;savePrefs();}
+  if(t.id==="aboutb"||t.id==="abt2"){$("welcome").classList.remove("on");$("about").classList.add("on");}
+  if(t.id==="aok"){$("about").classList.remove("on");P.welcomed=true;savePrefs();}
+  if(t.id==="hostin"){$("about").classList.remove("on");$("hostm").classList.add("on");}
+  if(t.id==="hcancel")$("hostm").classList.remove("on");
+  if(t.id==="hostout"&&fb){fb.signOut(fb.auth);}
+});
+$("q").addEventListener("input",e=>{query=e.target.value;renderHouse(calc());});
+function shareText(){
+  const c=calc();
+  const txt=`Election night 2026, ${SHARED?"live tracker":"my tracker"} as of ${fmtT(Date.now())}\n${headline(c)}\nHouse watchlist: D ${c.dWins}, R ${c.rWins} of 60 called. Projected Dem seats: about ${Math.round(c.proj)} (majority is 218).\nBlowout checklist: ${c.yes} of 11.\nSurprise wins: ${c.surp.map(x=>x[0].d).join(", ")||"none"}.`;
+  const done=m=>{$("sh").textContent=m;};
+  if(navigator.share){navigator.share({text:txt}).catch(()=>{});return;}
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt).then(()=>done("Copied. Paste it into your group chat."),()=>{done(txt)});
+  else done(txt);
+}
+let wl=null;
+if("wakeLock" in navigator){
+  const w=$("wake");w.hidden=false;
+  w.onclick=async()=>{
+    try{if(wl||w.getAttribute("aria-pressed")==="want"){if(wl)await wl.release();wl=null;w.setAttribute("aria-pressed","false");}
+    else{wl=await navigator.wakeLock.request("screen");w.setAttribute("aria-pressed","true");wl.addEventListener("release",()=>{wl=null;w.setAttribute("aria-pressed",document.visibilityState==="hidden"?"want":"false");});}}catch(e){}
+  };
+}
+document.addEventListener("visibilitychange",async()=>{if(document.visibilityState==="visible"&&$("wake").getAttribute("aria-pressed")==="want"){try{wl=await navigator.wakeLock.request("screen");$("wake").setAttribute("aria-pressed","true");}catch(e){}}});
+function liveBar(){
+  const el=$("live");if(!SHARED){el.hidden=true;return;}
+  el.hidden=false;const last=S.u?fmtT(S.u):"";let cls="",txt;
+  if(liveErr){cls="bad";txt=`Can't reach live results. ${last?"Showing the last update from "+last+".":"Check your connection and reload."}`;}
+  else if(canEdit){cls="host";txt=connected?"HOST MODE · Your taps go to everyone watching":"HOST MODE · Offline. Your taps will send when you reconnect.";}
+  else if(!everConnected){txt="Connecting to live results…";}
+  else if(!connected){cls="bad";txt=`Reconnecting…${last?" Last update "+last+".":""}`;}
+  else{cls="ok";txt=`● LIVE · ${last?"Updated "+last:"Waiting for the first result"}`;}
+  el.className="live "+cls;el.textContent=txt;
+}
+function hostBox(){
+  if(!SHARED){$("hostbox").innerHTML="";return;}
+  $("hostbox").innerHTML=hostUser?`<p class="cap">Signed in as host.</p><button class="btn" id="hostout">Sign out of host mode</button>`:`<button class="btn" id="hostin">Host sign-in</button>`;
+}
+function announce(o,n){
+  const msgs=[];
+  SEATS.forEach(s=>{const a=o.h[s.d],b=n.h[s.d];if(b&&(!a||a.r!==b.r))msgs.push(`${s.d}: ${b.r==="D"?"D win":"R win"}${tag(s,b.r)?" ("+tag(s,b.r)+")":""}`);});
+  ITEMS.forEach(i=>{const a=o.b[i.id],b=n.b[i.id];if(b&&(!a||a.v!==b.v))msgs.push(`Checklist ${i.id}: ${b.v==="y"?"Yes":"No"}`);});
+  if(msgs.length===1)showToast(msgs[0],null);else if(msgs.length>1)showToast(`${msgs.length} new results`,null);
+}
+async function initLive(){
+  const base=`https://www.gstatic.com/firebasejs/${FB_VER}/`;
+  try{
+    const [A,D,U]=await Promise.all([import(base+"firebase-app.js"),import(base+"firebase-database.js"),import(base+"firebase-auth.js")]);
+    const app=A.initializeApp(CFG);
+    fb={db:D.getDatabase(app),ref:D.ref,set:D.set,auth:U.getAuth(app),signOut:U.signOut};
+    D.onValue(D.ref(fb.db,".info/connected"),s=>{connected=!!s.val();if(connected)everConnected=true;liveBar();});
+    D.onValue(D.ref(fb.db,PATH),s=>{
+      const n=norm(s.val()),o=S;S=n;lsSet(CACHE,S);
+      if(loaded&&!canEdit)announce(o,n);
+      loaded=true;liveErr=false;canEdit=!!hostUser;render();
+    },()=>{liveErr=true;liveBar();});
+    U.onAuthStateChanged(fb.auth,u=>{
+      hostUser=u;canEdit=!!u&&loaded;hostBox();render();
+      if(u)$("hostm").classList.remove("on");
+      else if(qs.has("host")){$("welcome").classList.remove("on");$("hostm").classList.add("on");}
+    });
+    $("hostf").onsubmit=e=>{e.preventDefault();$("herr").textContent="Signing in…";
+      U.signInWithEmailAndPassword(fb.auth,$("he").value.trim(),$("hp").value).then(()=>{$("herr").textContent="";$("hp").value="";showToast("Signed in. You're the host.",null);})
+      .catch(()=>{$("herr").textContent="That didn't work. Check the email and password.";});};
+  }catch(e){liveErr=true;liveBar();}
+}
+if(SHARED){
+  $("wbody").innerHTML=`<p>Results appear here live as the host enters them, right after networks and Decision Desk call each race. Your screen updates on its own, so just keep it open.</p><p>The app explains what each result means for Democrats' chances at the House and whether the night is turning into a blowout.</p><p>Watch the line under the headline: <b>● LIVE</b> means you're up to date.</p>`;
+  $("wtabs").innerHTML=`<b>Blowout:</b> the 11-item checklist. <b>House:</b> 60 key districts, filled in as races are called. <b>What it means:</b> plain-English read of the night.`;
+  $("priv").textContent="Forecasts as of 3:22 p.m. ET, Nov 2, 2026. Results are entered by the host and sent to your screen through a Google Firebase database. Viewers don't sign in, and the app has no ads or tracking.";
+}
+if(!storeOk&&!SHARED)$("warn").style.display="block";
+hostBox();render();go("blowout");
+if(!P.welcomed&&!qs.has("host"))$("welcome").classList.add("on");
+if(SHARED)initLive();
+setInterval(()=>{if(tab==="blowout")renderBlowout(calc());},60000);
+</script>
+</body>
+</html>
